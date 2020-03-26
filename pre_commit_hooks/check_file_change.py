@@ -25,8 +25,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--algorithm', default='sha1', help='Algorithm')
     parser.add_argument(
-        '--check', action='append',
-        help='Files to check', required=True,
+        '--check', nargs='+', help='Files to check', required=True,
     )
     parser.add_argument('filenames', nargs='+', help='Files to check')
     args = parser.parse_args(argv)
@@ -45,7 +44,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             with open(filename, 'rb') as file_obj:
                 digest = algorithm(file_obj.read()).hexdigest()
 
-                if digest != checksum:
+                if digest != files[filename]:
                     retv = FAIL
                     print(
                         f'{bcolors.WARNING}{filename} {args.algorithm} '
