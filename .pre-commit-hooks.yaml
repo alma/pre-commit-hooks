@@ -1,0 +1,6 @@
+- id: check-file-change
+  name: Check files change
+  description: Check that listed files don't change.
+  entry: check-file-change
+  language: python
+  files: '^$'
