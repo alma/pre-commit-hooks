@@ -3,4 +3,4 @@
   description: Check that listed files don't change.
   entry: check-file-change
   language: python
-  files: '^$'
+  files: ^$

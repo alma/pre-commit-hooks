@@ -24,11 +24,15 @@ class bcolors:
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--algorithm', default='sha1', help='Algorithm')
+    parser.add_argument(
+        '--check', action='append',
+        help='Files to check', required=True,
+    )
     parser.add_argument('filenames', nargs='+', help='Files to check')
     args = parser.parse_args(argv)
 
     files = {}
-    for arg in args.filenames:
+    for arg in args.check:
         filename, checksum = arg.split(':')
         files[filename] = checksum
 
@@ -36,18 +40,19 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     algorithm = getattr(hashlib, args.algorithm)
 
-    for filename, checksum in files.items():
-        with open(filename, 'rb') as file_obj:
-            digest = algorithm(file_obj.read()).hexdigest()
+    for filename in args.filenames:
+        if filename in files:
+            with open(filename, 'rb') as file_obj:
+                digest = algorithm(file_obj.read()).hexdigest()
 
-            if digest != checksum:
-                retv = FAIL
-                print(
-                    f'{bcolors.WARNING}{filename} {algorithm} checksum failed.'
-                    f'{bcolors.ENDC} '
-                    f'Got {bcolors.FAIL}{digest}{bcolors.ENDC} instead of '
-                    f'{bcolors.OKGREEN}{checksum}{bcolors.ENDC}',
-                )
+                if digest != checksum:
+                    retv = FAIL
+                    print(
+                        f'{bcolors.WARNING}{filename} {args.algorithm} '
+                        f'checksum failed.{bcolors.ENDC} '
+                        f'Got {bcolors.FAIL}{digest}{bcolors.ENDC} instead of '
+                        f'{bcolors.OKGREEN}{checksum}{bcolors.ENDC}',
+                    )
 
     return retv
 
