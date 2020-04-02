@@ -43,8 +43,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         if filename in files:
             with open(filename, 'rb') as file_obj:
                 digest = algorithm(file_obj.read()).hexdigest()
+                checksum = files[filename]
 
-                if digest != files[filename]:
+                if digest != checksum:
                     retv = FAIL
                     print(
                         f'{bcolors.WARNING}{filename} {args.algorithm} '
