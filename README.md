@@ -25,7 +25,7 @@ Add this to your `.pre-commit-config.yaml`
 
 ### Hooks available
 
-#### `check-file-change
+#### check-file-change
 
 Make sure files didn't change.
 You must provide list of target files with their expected checksum in a given algorithm. (Default is sha1)
