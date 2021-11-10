@@ -4,3 +4,9 @@
   entry: check-file-change
   language: python
   files: ^$
+- id: check-comments
+  name: Count comments in files
+  description: Check if file contains at least more than 0% of comments
+  entry: pre_commit_hooks/check-comments.sh
+  language: script
+  types: [python]
