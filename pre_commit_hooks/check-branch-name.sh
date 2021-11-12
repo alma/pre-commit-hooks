@@ -18,7 +18,7 @@ if [[ $BRANCH_NAME_REGEX == "" ]]; then
   echo "  hooks:"
   echo "  - id: check-branch-name"
   echo "    args:"
-  echo '      - "-r^(ci|docs|feature|fix|hotfix|perf|refactor|test)\/.*$"'
+  echo '      - "-r^(((ci|docs|feature|fix|hotfix|perf|refactor|test)\/.*)|main)$"'
   exit 1
 fi
 
