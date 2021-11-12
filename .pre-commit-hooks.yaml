@@ -15,4 +15,4 @@
   description: Checks that the name of the branch you are committing to is compliant with a given regex
   entry: pre_commit_hooks/check-branch-name.sh
   language: script
-  pass_filename: false
+  pass_filenames: false
