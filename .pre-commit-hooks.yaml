@@ -10,3 +10,9 @@
   entry: pre_commit_hooks/check-comments.sh
   language: script
   types: [python]
+- id: check-branch-name
+  name: Check the compliance of your branch name
+  description: Checks that the name of the branch you are committing to is compliant with a given regex
+  entry: pre_commit_hooks/check-branch-name.sh
+  language: script
+  pass_filenames: false
