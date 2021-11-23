@@ -1,9 +1,10 @@
 #!/bin/bash
 
-while getopts r: flag
+while getopts r:e: flag
 do
     case "${flag}" in
         r) BRANCH_NAME_REGEX=${OPTARG};;
+        e) EXCLUDE_BRANCH_REGEX=${OPTARG};;
         *) echo "Invalid flag provided ($flag)"; exit 1;
     esac
 done
@@ -24,10 +25,15 @@ fi
 
 BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 
+if [[ $BRANCH_NAME =~ $EXCLUDE_BRANCH_REGEX ]]; then
+  exit 0
+fi
+
 if ! [[ $BRANCH_NAME =~ $BRANCH_NAME_REGEX ]]; then
     echo "*** Commit interrupted ***"
     echo "Your branch name does not match the naming convention."
-    echo "Branch names should match \"$BRANCH_NAME_REGEX\"..."
+    echo "Branch names should match \"$BRANCH_NAME_REGEX\"."
+    echo "Your branch is named \"$BRANCH_NAME\"..."
 
     exit 1
 fi
