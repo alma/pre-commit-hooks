@@ -25,7 +25,7 @@ fi
 
 BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 
-if [[ $BRANCH_NAME =~ $EXCLUDE_BRANCH_REGEX ]]; then
+if [[ -n $EXCLUDE_BRANCH_REGEX && $BRANCH_NAME =~ $EXCLUDE_BRANCH_REGEX ]]; then
   exit 0
 fi
 
