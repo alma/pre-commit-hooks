@@ -7,7 +7,6 @@
 hooks/<hook-id>.sh       # one script per hook, named after its id
 tests/<hook-id>.bats     # the hook's tests
 README.md                # a section per hook
-BENCHMARKS.md            # benchmark results, a section per hook
 ```
 
 ## Adding a hook
@@ -38,8 +37,6 @@ prek try-repo /path/to/pre-commit-hooks <hook-id> --all-files
 
 CI runs the same commands on every PR. On a PR from a fork, GitHub may wait for a maintainer to approve the
 workflow runs before CI starts.
-
-If a change could affect a hook's speed, benchmark it and update [BENCHMARKS.md](BENCHMARKS.md).
 
 ## Releasing
 
