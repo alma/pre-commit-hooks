@@ -5,6 +5,4 @@
     inline metadata. Fails when a lock file is stale or missing. Requires uv.
   entry: hooks/uv-lock-script.sh
   language: script
-  files: \.py(\.lock)?$
-  # foo.py and foo.py.lock must not be locked by two parallel batches
-  require_serial: true
+  files: \.py$

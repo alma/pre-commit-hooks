@@ -32,13 +32,14 @@ Keeps the `<script>.py.lock` lock file of every Python script with [PEP 723](htt
 inline metadata up to date, with `uv lock --script`:
 
 - a stale lock file is rewritten, and the hook fails so you can stage it;
-- a missing lock file is created, and the hook fails so you can add it.
+- a missing lock file is created, and the hook fails until you add it to git (as does an existing lock file
+  that isn't added).
 
 Requires [uv](https://docs.astral.sh/uv/) on your `PATH`.
 
 ```yaml
       - id: uv-lock-script
-        files: ^scripts/.*\.py(\.lock)?$ # optional, defaults to every Python file
+        files: ^scripts/.*\.py$ # optional, defaults to every Python file
 ```
 
 Run the scripts with `uv run --locked --script <script>.py`, so a stale lock file fails instead of being

@@ -62,13 +62,6 @@ EOF
   grep -q 'requires-python = ">=3.11"' foo.py.lock
 }
 
-@test "locks the script when only its lock file is passed" {
-  write_script foo.py
-  run "$HOOK" foo.py.lock
-  [ "$status" -eq 1 ]
-  [ -f foo.py.lock ]
-}
-
 @test "fails with uv's error when the script can't be locked" {
   write_script foo.py ">=3.10" "requests"
   run "$HOOK" foo.py
@@ -90,10 +83,4 @@ EOF
   run "$HOOK" plain.py
   [ "$status" -eq 0 ]
   [ ! -f plain.py.lock ]
-}
-
-@test "ignores a lock file whose script was deleted" {
-  touch gone.py.lock
-  run "$HOOK" gone.py.lock
-  [ "$status" -eq 0 ]
 }
