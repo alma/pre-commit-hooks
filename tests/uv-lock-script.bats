@@ -13,11 +13,13 @@ setup() {
 
 # write_script <path> [requires-python] [dependency]: a PEP 723 script
 write_script() {
+  local dependencies=""
+  [[ -z "${3:-}" ]] || dependencies="\"$3\""
   mkdir -p "$(dirname "$1")"
   cat >"$1" <<EOF
 # /// script
 # requires-python = "${2:->=3.10}"
-# dependencies = [${3:+"$3"}]
+# dependencies = [$dependencies]
 # ///
 print("hello")
 EOF
@@ -44,6 +46,32 @@ EOF
 @test "passes and keeps an up-to-date lock file unchanged" {
   write_script foo.py
   uv lock --quiet --script foo.py
+  git add foo.py.lock
+  cp foo.py.lock expected.lock
+  run "$HOOK" foo.py
+  [ "$status" -eq 0 ]
+  cmp foo.py.lock expected.lock
+}
+
+@test "keeps an up-to-date lock file of an outdated dependency, without network" {
+  write_script foo.py ">=3.10" "idna"
+  cat >foo.py.lock <<'EOF'
+version = 1
+revision = 5
+requires-python = ">=3.10"
+
+[manifest]
+requirements = [{ name = "idna" }]
+
+[[package]]
+name = "idna"
+version = "3.7"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/21/ed/f86a79a07470cb07819390452f178b3bef1d375f2ec021ecfc709fc7cf07/idna-3.7.tar.gz", hash = "sha256:028ff3aadf0609c1fd278d8ea3089299412a7a8b9bd005dd08b9f8285bcb5cfc", size = 189575, upload-time = "2024-04-11T03:34:43.276Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e5/3e/741d8c82801c347547f8a2a06aa57dbb1992be9e948df2ea0eda2c8b79e8/idna-3.7-py3-none-any.whl", hash = "sha256:82fee1fc78add43492d3a1898bfa6d8a904cc97d8427f683ed8e798d07761aa0", size = 66836, upload-time = "2024-04-11T03:34:41.447Z" },
+]
+EOF
   git add foo.py.lock
   cp foo.py.lock expected.lock
   run "$HOOK" foo.py
