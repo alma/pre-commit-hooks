@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+# Every merged PR is released, bumped according to its release label; see CONTRIBUTING.md#releasing.
+# Tags are immutable: there is no floating major tag, since pre-commit caches each `rev` forever.
+
+jobs:
+  release:
+    name: Create new release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    # Release one merge at a time. `queue: max` keeps every pending run waiting: by default, GitHub keeps a
+    # single pending run per group and cancels the others, which would silently skip their releases.
+    concurrency:
+      group: release
+      cancel-in-progress: false
+      queue: max
+
+    permissions:
+      contents: write  # create the tag and the release
+      pull-requests: read  # read the release labels of the merged PR
+
+    steps:
+      - name: Create release
+        uses: rymndhng/release-on-push-action@aebba2bbce07a9474bf95e8710e5ee8a9e922fe2 # v0.28.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          # The "Release label" check requires a label on every PR: never guess a bump without one
+          bump_version_scheme: norelease
+          tag_prefix: v
+          use_github_release_notes: true

@@ -1,46 +1,54 @@
-Alma pre-commit-hooks
-=====================
+# Alma pre-commit hooks
 
-Some Alma hooks for pre-commit.
+Shared [pre-commit](https://pre-commit.com) hooks for Alma repositories. They work with both
+[prek](https://prek.j178.dev) and pre-commit.
 
-See also: https://github.com/pre-commit/pre-commit
+## Usage
 
-
-## Using pre-commit-hooks with pre-commit
-
-Add this to your `.pre-commit-config.yaml`.
-Only use the sections of the checks you want to use (each section starts with `- id: a-check-name`.
+Add the hooks you need to your `.pre-commit-config.yaml`:
 
 ```yaml
--   repo: https://github.com/alma/pre-commit-hooks
-    rev: 1.0.0
+repos:
+  - repo: https://github.com/alma/pre-commit-hooks
+    rev: v2.0.0 # pin a full version, see below
     hooks:
-    - id: check-file-change
-      files: "^config.*.yaml$"
-      args:
-        - --check
-        - config.dev.yaml:eacaec4b8c4665dfce2d0e082acd0d39787457da
-        - config.prod.yaml:eacaec4b8c4665dfce2d0e082acd0d39787457da
-        - --
-    - id: check-comments
+      - id: check-branch-name
+        args: ["-r^((feature|fix)/.*|main)$"]
 ```
 
-## Hooks available
+Always pin a full `vX.Y.Z` version, never a branch. pre-commit caches each `rev` forever, so a moving
+reference would never be updated on your machine. To get a PR when a new version is released, enable
+Renovate's [pre-commit manager](https://docs.renovatebot.com/modules/manager/pre-commit/). See the
+[releases](https://github.com/alma/pre-commit-hooks/releases) for what changed.
 
-The hooks below are available in this repository.
+## Hooks
 
-### check-file-change
+| Hook                                      | Description                                    |
+|-------------------------------------------|------------------------------------------------|
+| [`check-branch-name`](#check-branch-name) | Checks the current branch name against a regex |
 
-Make sure files didn't change.
-You must provide list of target files with their expected checksum in a given algorithm. (Default is sha1)
-You can change the algorithm with the ``--algorithm=sha256`` option.
+### check-branch-name
 
-### check-comment
+Fails when the name of the current branch doesn't match a regex. It runs once per commit, without file
+names, and is skipped when the commit stages no file.
 
-Checks that the modified files contain at least one line of comment.
+| Argument    | Required | Description                                               |
+|-------------|----------|-----------------------------------------------------------|
+| `-r<regex>` | yes      | Branch names must match this bash regex                   |
+| `-e<regex>` | no       | Branches matching this bash regex are skipped (e.g. bots) |
 
-#### Dependencies
+```yaml
+      - id: check-branch-name
+        args:
+          - "-r^((ci|docs|feature|fix|hotfix|perf|refactor|test)/.*|main)$"
+          - "-e^renovate/"
+```
 
-This hook relies on (should be installed on the local machine / VM):
-* [cloc](https://github.com/AlDanial/cloc)
-* [jq](https://stedolan.github.io/jq/)
+## Upgrading from 1.x
+
+`check-branch-name` is unchanged in 2.0.0: only bump the `rev`. The `check-file-change` and
+`check-comments` hooks were removed.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).

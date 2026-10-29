@@ -1,18 +1,6 @@
-- id: check-file-change
-  name: Check files change
-  description: Check that listed files don't change.
-  entry: check-file-change
-  language: python
-  files: ^$
-- id: check-comments
-  name: Count comments in files
-  description: Check if file contains at least more than 0% of comments
-  entry: pre_commit_hooks/check-comments.sh
-  language: script
-  types: [python]
 - id: check-branch-name
   name: Check the compliance of your branch name
   description: Checks that the name of the branch you are committing to is compliant with a given regex
-  entry: pre_commit_hooks/check-branch-name.sh
+  entry: hooks/check-branch-name.sh
   language: script
   pass_filenames: false
