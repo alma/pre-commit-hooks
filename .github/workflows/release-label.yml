@@ -1,0 +1,40 @@
+name: Release label
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - labeled
+      - unlabeled
+
+# Every merge to main is released according to its PR label (see CONTRIBUTING.md#releasing),
+# so each PR must carry exactly one release label.
+
+jobs:
+  release-label:
+    name: Release label
+    runs-on: ubuntu-26.04
+    timeout-minutes: 5
+
+    # Labels can change quickly: only the run for the latest change matters
+    concurrency:
+      group: release-label-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+
+    permissions: {}
+
+    steps:
+      - name: Require exactly one release label
+        env:
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: |
+          release_labels="$(jq -c 'map(select(IN("release:major", "release:minor", "release:patch", "norelease")))' <<<"$LABELS")"
+          if [[ "$(jq length <<<"$release_labels")" -ne 1 ]]; then
+            echo "::error::This PR needs exactly one release label: release:major, release:minor, release:patch or norelease (found ${release_labels}). Contributing from a fork? A maintainer adds it during the review. See CONTRIBUTING.md#releasing."
+            exit 1
+          fi
+          echo "Release label: $release_labels"

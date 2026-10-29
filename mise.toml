@@ -1,0 +1,5 @@
+# Development tools, used locally and in CI: run `mise install`
+[tools]
+bats = "1.14.0" # runs the hook tests
+prek = "0.5.7" # runs the linters of .pre-commit-config.yaml
+uv = "0.13.6" # required by the uv-lock-script hook

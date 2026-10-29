@@ -1,0 +1,65 @@
+name: Continuous Integration
+run-name: CI - ${{ github.event.pull_request.title }}
+
+on:
+  pull_request:
+    branches:
+      - main
+
+# This repository is public: run on GitHub-hosted runners only, never on self-hosted ones.
+
+# A new push makes the previous run of the same PR obsolete
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  code-quality-check:
+    name: Code quality check
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          show-progress: false
+          persist-credentials: false
+
+      - name: Install tools
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        env:
+          MISE_LOCKED: 1 # only install the versions and checksums of mise.lock
+        with:
+          version: 2026.10.22
+
+      - name: Run pre-commit checks
+        run: prek run --all-files --show-diff-on-failure --color=always
+
+  hook-tests:
+    name: Hook tests
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          show-progress: false
+          persist-credentials: false
+
+      - name: Install tools
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        env:
+          MISE_LOCKED: 1 # only install the versions and checksums of mise.lock
+        with:
+          version: 2026.10.22
+
+      - name: Run hook tests
+        run: bats tests/
