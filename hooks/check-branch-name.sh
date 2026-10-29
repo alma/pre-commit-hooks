@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "check-branch-name is deprecated, use a GitHub ruleset instead:" \
+  "https://github.com/alma/pre-commit-hooks#replacing-check-branch-name-with-a-ruleset" >&2
+
 while getopts r:e: flag
 do
     case "${flag}" in

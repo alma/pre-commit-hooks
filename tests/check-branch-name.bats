@@ -1,5 +1,7 @@
 #!/usr/bin/env bats
 
+bats_require_minimum_version 1.5.0 # run --separate-stderr
+
 setup() {
   HOOK="$BATS_TEST_DIRNAME/../hooks/check-branch-name.sh"
   # Isolate from the developer's git config (commit signing, global hooks, ...) and from an outer repository
@@ -16,6 +18,20 @@ REGEX='^((feature|fix)/.*|main)$'
   run "$HOOK"
   [ "$status" -eq 1 ]
   [[ "$output" == *"No regular expression provided"* ]]
+}
+
+@test "prints a deprecation notice on stderr" {
+  run --separate-stderr "$HOOK" -r "$REGEX"
+  [ "$status" -eq 0 ]
+  [[ "$stderr" == *"check-branch-name is deprecated"* ]]
+  [[ "$output" != *"deprecated"* ]]
+}
+
+@test "prints the deprecation notice when it fails too" {
+  git checkout --quiet -b wip
+  run --separate-stderr "$HOOK" -r "$REGEX"
+  [ "$status" -eq 1 ]
+  [[ "$stderr" == *"check-branch-name is deprecated"* ]]
 }
 
 @test "passes on a matching branch" {

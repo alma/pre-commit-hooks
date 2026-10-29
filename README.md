@@ -23,11 +23,14 @@ Renovate's [pre-commit manager](https://docs.renovatebot.com/modules/manager/pre
 
 ## Hooks
 
-| Hook                                      | Description                                    |
-|-------------------------------------------|------------------------------------------------|
-| [`check-branch-name`](#check-branch-name) | Checks the current branch name against a regex |
+| Hook                                      | Description                                                    |
+|-------------------------------------------|----------------------------------------------------------------|
+| [`check-branch-name`](#check-branch-name) | **Deprecated.** Checks the current branch name against a regex |
 
 ### check-branch-name
+
+> [!WARNING]
+> **Deprecated**, see [Replacing check-branch-name with a ruleset](#replacing-check-branch-name-with-a-ruleset).
 
 Fails when the name of the current branch doesn't match a regex. It runs once per commit, without file
 names, and is skipped when the commit stages no file.
@@ -44,9 +47,18 @@ names, and is skipped when the commit stages no file.
           - "-e^renovate/"
 ```
 
+#### Replacing check-branch-name with a ruleset
+
+Use a GitHub ruleset with a [**Restrict branch names**][restrict-branch-names] rule instead: it's enforced
+at push, so it can't be skipped locally. In Alma repositories, ask DevX to add the repository to the
+organization ruleset.
+
+[restrict-branch-names]: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/creating-rulesets-for-a-repository#adding-metadata-restrictions
+
 ## Upgrading from 1.x
 
-`check-branch-name` is unchanged in 2.0.0: only bump the `rev`. The `check-file-change` and
+`check-branch-name` runs the same checks in 2.0.0, and now prints a deprecation notice: only bump the `rev`. It is deprecated though, consider
+[replacing it with a ruleset](#replacing-check-branch-name-with-a-ruleset). The `check-file-change` and
 `check-comments` hooks were removed.
 
 ## Contributing

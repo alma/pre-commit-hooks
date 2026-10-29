@@ -9,10 +9,6 @@ tests/<hook-id>.bats     # the hook's tests
 README.md                # a section per hook
 ```
 
-This is the layout of shell-based hook repositories such as
-[antonbabenko/pre-commit-terraform](https://github.com/antonbabenko/pre-commit-terraform) and
-[gruntwork-io/pre-commit](https://github.com/gruntwork-io/pre-commit).
-
 ## Adding a hook
 
 1. Write `hooks/<hook-id>.sh`, executable (`chmod +x`), with a shebang. Hooks use `language: script`, so
@@ -38,8 +34,6 @@ To try a hook in another repository before it's released, run from that reposito
 ```bash
 prek try-repo /path/to/pre-commit-hooks <hook-id> --all-files
 ```
-
-`try-repo` includes uncommitted changes, but can't pass `args`.
 
 CI runs the same commands on every PR. On a PR from a fork, GitHub may wait for a maintainer to approve the
 workflow runs before CI starts.
@@ -77,4 +71,3 @@ Rules for tags:
 
 - Never delete, move or re-create a tag. Consumers pin them, and pre-commit caches each `rev` forever.
 - There is no floating major tag (`v2`), for the same reason.
-- The 1.x tags have no `v` prefix. Keep them as they are.
