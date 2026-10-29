@@ -21,13 +21,16 @@ README.md                # a section per hook
 
 ## Testing locally
 
-Requires [prek](https://prek.j178.dev) and [bats](https://bats-core.readthedocs.io) (`brew install bats-core`).
+Install [mise](https://mise.jdx.dev), then the tools CI uses, at the versions of `mise.toml`:
 
 ```bash
+mise install                  # prek, bats and uv
 prek run --all-files          # lint: shellcheck, zizmor, manifest validation
 bats tests/                   # all tests, as CI runs them
 bats tests/<hook-id>.bats     # one hook's tests
 ```
+
+To change a tool's version, run `mise use <tool>@<version>`: it updates `mise.toml` and `mise.lock`.
 
 To try a hook in another repository before it's released, run from that repository:
 
