@@ -12,8 +12,7 @@ repos:
   - repo: https://github.com/alma/pre-commit-hooks
     rev: v2.0.0 # pin a full version, see below
     hooks:
-      - id: check-branch-name
-        args: ["-r^((feature|fix)/.*|main)$"]
+      - id: uv-lock-script
 ```
 
 Always pin a full `vX.Y.Z` version, never a branch. pre-commit caches each `rev` forever, so a moving
@@ -23,43 +22,38 @@ Renovate's [pre-commit manager](https://docs.renovatebot.com/modules/manager/pre
 
 ## Hooks
 
-| Hook                                      | Description                                                    |
-|-------------------------------------------|----------------------------------------------------------------|
-| [`check-branch-name`](#check-branch-name) | **Deprecated.** Checks the current branch name against a regex |
+| Hook                                | Description                                        |
+|-------------------------------------|----------------------------------------------------|
+| [`uv-lock-script`](#uv-lock-script) | Keeps the lock files of PEP 723 scripts up to date |
 
-### check-branch-name
+### uv-lock-script
 
-> [!WARNING]
-> **Deprecated**, see [Replacing check-branch-name with a ruleset](#replacing-check-branch-name-with-a-ruleset).
+Keeps the `<script>.py.lock` lock file of every Python script with [PEP 723](https://peps.python.org/pep-0723/)
+inline metadata up to date, with `uv lock --script`:
 
-Fails when the name of the current branch doesn't match a regex. It runs once per commit, without file
-names, and is skipped when the commit stages no file.
+- a stale lock file is rewritten, and the hook fails so you can stage it;
+- a missing lock file is created, and the hook fails so you can add it.
 
-| Argument    | Required | Description                                               |
-|-------------|----------|-----------------------------------------------------------|
-| `-r<regex>` | yes      | Branch names must match this bash regex                   |
-| `-e<regex>` | no       | Branches matching this bash regex are skipped (e.g. bots) |
+Requires [uv](https://docs.astral.sh/uv/) on your `PATH`.
 
 ```yaml
-      - id: check-branch-name
-        args:
-          - "-r^((ci|docs|feature|fix|hotfix|perf|refactor|test)/.*|main)$"
-          - "-e^renovate/"
+      - id: uv-lock-script
+        files: ^scripts/.*\.py(\.lock)?$ # optional, defaults to every Python file
 ```
 
-#### Replacing check-branch-name with a ruleset
-
-Use a GitHub ruleset with a [**Restrict branch names**][restrict-branch-names] rule instead: it's enforced
-at push, so it can't be skipped locally. In Alma repositories, ask DevX to add the repository to the
-organization ruleset.
-
-[restrict-branch-names]: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/creating-rulesets-for-a-repository#adding-metadata-restrictions
+Run the scripts with `uv run --locked --script <script>.py`, so a stale lock file fails instead of being
+silently rewritten.
 
 ## Upgrading from 1.x
 
-`check-branch-name` runs the same checks in 2.0.0, and now prints a deprecation notice: only bump the `rev`. It is deprecated though, consider
-[replacing it with a ruleset](#replacing-check-branch-name-with-a-ruleset). The `check-file-change` and
-`check-comments` hooks were removed.
+All the 1.x hooks were removed:
+
+- `check-branch-name`: use a GitHub ruleset with a [**Restrict branch names**][restrict-branch-names] rule
+  instead. It's enforced at push, so it can't be skipped locally. In Alma repositories, ask DevX to add the
+  repository to the organization ruleset.
+- `check-file-change` and `check-comments`: no replacement.
+
+[restrict-branch-names]: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/creating-rulesets-for-a-repository#adding-metadata-restrictions
 
 ## Contributing
 

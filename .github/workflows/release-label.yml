@@ -17,7 +17,7 @@ on:
 jobs:
   release-label:
     name: Release label
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 5
 
     # Labels can change quickly: only the run for the latest change matters

@@ -16,7 +16,7 @@ concurrency:
 jobs:
   code-quality-check:
     name: Code quality check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
 
     permissions:
@@ -29,13 +29,12 @@ jobs:
           show-progress: false
           persist-credentials: false
 
-      # Runs .pre-commit-config.yaml: shellcheck, zizmor, manifest validation, and file hygiene checks
       - name: Run pre-commit checks
         uses: j178/prek-action@44924fe9ef4a6f88253c4b6b1bf11c689d3ce53d # v3.1.0
 
   hook-tests:
     name: Hook tests
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
 
     permissions:
@@ -57,6 +56,12 @@ jobs:
           assert-install: false
           detik-install: false
           file-install: false
+
+      # Required by the uv-lock-script hook
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          enable-cache: false # the tests run offline, without dependencies
 
       - name: Run hook tests
         run: bats tests/

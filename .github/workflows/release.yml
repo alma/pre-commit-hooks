@@ -11,7 +11,7 @@ on:
 jobs:
   release:
     name: Create new release
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 5
 
     # Release one merge at a time. `queue: max` keeps every pending run waiting: by default, GitHub keeps a

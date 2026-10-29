@@ -1,8 +1,10 @@
-- id: check-branch-name
-  name: Check the compliance of your branch name (deprecated, see README)
-  description: Checks that the name of the branch you are committing to is compliant with a given regex
-  entry: hooks/check-branch-name.sh
+- id: uv-lock-script
+  name: Lock PEP 723 scripts
+  description: >
+    Generate the <script>.py.lock lock file of every Python script with PEP 723
+    inline metadata. Fails when a lock file is stale or missing. Requires uv.
+  entry: hooks/uv-lock-script.sh
   language: script
-  pass_filenames: false
-  # Show the deprecation notice even when the hook passes
-  verbose: true
+  files: \.py(\.lock)?$
+  # foo.py and foo.py.lock must not be locked by two parallel batches
+  require_serial: true

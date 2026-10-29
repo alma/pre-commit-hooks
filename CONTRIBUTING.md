@@ -16,7 +16,7 @@ README.md                # a section per hook
 2. Declare it in `.pre-commit-hooks.yaml` with `entry: hooks/<hook-id>.sh`.
 3. Add `tests/<hook-id>.bats`, written with [bats](https://bats-core.readthedocs.io). The tests call the
    script directly with the arguments and file names pre-commit would pass, and check its exit status and
-   output. See `tests/check-branch-name.bats`.
+   output. See `tests/uv-lock-script.bats`.
 4. Add a section to `README.md`: what it does, its arguments, its requirements, an example.
 
 ## Testing locally
@@ -55,7 +55,7 @@ passes, and it only passes when the PR has **exactly one** of these labels:
 
 Only people with write access to the repository can add labels. If you contribute from a fork, say in the PR
 description which label you think fits: a maintainer adds it during the review, and the check stays red until
-then. Renovate PRs get `norelease` automatically (`renovate.json5`): they only update CI and dev tooling.
+then. Renovate PRs get `norelease` automatically (`.github/renovate.json5`): they only update CI and dev tooling.
 
 A change is **breaking** when a consumer bumping `rev` can be broken without changing their config:
 
